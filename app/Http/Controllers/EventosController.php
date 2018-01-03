@@ -15,7 +15,7 @@ class EventosController extends Controller
     {
         $data=Eventos::all();
 
-        return Response()->json($data);        
+        return Response()->json($data);
     }
 
     /**
