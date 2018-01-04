@@ -24,7 +24,7 @@ $factory->define(App\User::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\eventos::class, function (Faker $faker) {
+$factory->define(app\Evento::class, function (Faker\Generator $faker) {
 
     return [
         'title' => $faker->sentence(4),

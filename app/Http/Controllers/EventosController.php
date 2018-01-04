@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Eventos;
+use app\Evento;
 
 class EventosController extends Controller
 {
@@ -14,7 +14,7 @@ class EventosController extends Controller
      */
     public function index()
     {
-        $data=Eventos::all();
+        $data=Evento::all();
 
         return Response()->json($data);
     }
