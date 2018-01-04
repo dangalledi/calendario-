@@ -1,95 +1,196 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>Loquero</title>
-
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
+        <title>fullCalendar and Laravel 5.3</title>
+        {!! Html::style('vendor/seguce92/bootstrap/css/bootstrap.min.css') !!}
+        {!! Html::style('vendor/seguce92/fullcalendar/fullcalendar.min.css') !!}
+        {!! Html::style('vendor/seguce92/bootstrap-datetimepicker/css/bootstrap-material-datetimepicker.css') !!}
+        {!! Html::style('vendor/seguce92/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css') !!}
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
+        <div class="container">
+            {{ Form::open(['route' => 'events.store', 'method' => 'post', 'role' => 'form']) }}
+            <div id="responsive-modal" class="modal fade" tabindex="-1" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4>REGISTRO DE NUEVO EVENTO</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                {{ Form::label('title', 'TITULO DE EVENTO') }}
+                                {{ Form::text('title', old('title'), ['class' => 'form-control']) }}
+                            </div>
 
-            <div class="content">
-                <div class="title m-b-md">
-                    calendario
-                </div>
+                            <div class="form-group">
+                                {{ Form::label('date_start', 'FECHA INICIO') }}
+                                {{ Form::text('date_start', old('date_start'), ['class' => 'form-control', 'readonly' => 'true']) }}
+                            </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Fabian</a>
-                    <a href="https://laracasts.com">Qliao</a>
-                    <a href="https://laravel-news.com">ahí</a>
-                    <a href="https://forge.laravel.com">tienes tu</a>
-                    <a href="https://github.com/laravel/laravel">calendario</a>
+                            <div class="form-group">
+                                {{ Form::label('time_start', 'HORA INICIO') }}
+                                {{ Form::text('time_start', old('time_start'), ['class' => 'form-control']) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ Form::label('date_end', 'FECHA HORA FIN') }}
+                                {{ Form::text('date_end', old('date_end'), ['class' => 'form-control']) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ Form::label('color', 'COLOR') }}
+                                <div class="input-group colorpicker">
+                                    {{ Form::text('color', old('color'), ['class' => 'form-control']) }}
+                                    <span class="input-group-addon">
+                                        <i></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dafault" data-dismiss="modal">CANCELAR</button>
+                            {!! Form::submit('GUARDAR', ['class' => 'btn btn-success']) !!}
+                        </div>
+                    </div>
                 </div>
             </div>
+            {{ Form::close() }}
+            <div id='calendar'></div>
+            
+            {!!Form::open(['route'=>['events.update', 1],  'method'=>'PUT', 'id'=>'updatemodel'])!!}
+            <div id="modal-event" class="modal fade" tabindex="-1" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4>DETALLES DE EVENTO</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                {{ Form::label('title', 'TITULO DE EVENTO') }}
+                                {{ Form::text('title', old('_title'), ['class' => 'form-control']) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ Form::label('date_start', 'FECHA INICIO') }}
+                                {{ Form::text('date_start', old('_date_start'), ['class' => 'form-control', 'readonly' => 'true']) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ Form::label('time_start', 'HORA INICIO') }}
+                                {{ Form::text('time_start', old('_time_start'), ['class' => 'form-control']) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ Form::label('date_end', 'FECHA HORA FIN') }}
+                                {{ Form::text('date_end', old('_date_end'), ['class' => 'form-control']) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ Form::label('color', 'COLOR') }}
+                                <div class="input-group colorpicker">
+                                    {{ Form::text('color', old('_color'), ['class' => 'form-control']) }}
+                                    <span class="input-group-addon">
+                                        <i></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <meta name="csrf-token" content="{{ csrf_token() }}">
+                            <a id="delete" data-href="{{ url('events') }}" data-id="" class="btn btn-danger">ELIMINAR</a>
+                            <button type="button" class="btn btn-dafault" data-dismiss="modal">CANCELAR</button>
+                            {!! Form::submit('ACTUALIZAR', ['class' => 'btn btn-success']) !!}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{ Form::close() }}
         </div>
     </body>
+    {!! Html::script('vendor/seguce92/jquery.min.js') !!}
+    {!! Html::script('vendor/seguce92/bootstrap/js/bootstrap.min.js') !!}
+    {!! Html::script('vendor/seguce92/fullcalendar/lib/moment.min.js') !!}
+    {!! Html::script('vendor/seguce92/fullcalendar/fullcalendar.min.js') !!}
+    {!! Html::script('vendor/seguce92/bootstrap-datetimepicker/js/bootstrap-material-datetimepicker.js') !!}
+    {!! Html::script('vendor/seguce92/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js') !!}
+    <script>
+        var BASEURL = "{{ url('/') }}";
+        $(document).ready(function() {
+
+    		$('#calendar').fullCalendar({
+    			header: {
+    				left: 'prev,next today',
+    				center: 'title',
+    				right: 'month,basicWeek,basicDay'
+    			},
+    			navLinks: true, // can click day/week names to navigate views
+    			editable: true,
+                selectable: true,
+                selectHelper: true,
+
+                select: function(start){
+                    start = moment(start.format());
+                    $('#date_start').val(start.format('YYYY-MM-DD'));
+                    $('#responsive-modal').modal('show');
+                },
+
+    			events: BASEURL + '/events',
+
+                eventClick: function(event, jsEvent, view){
+                    var date_start = $.fullCalendar.moment(event.start).format('YYYY-MM-DD');
+                    var time_start = $.fullCalendar.moment(event.start).format('hh:mm:ss');
+                    var date_end = $.fullCalendar.moment(event.end).format('YYYY-MM-DD hh:mm:ss');
+                    $('#modal-event #delete').attr('data-id', event.id);
+                    $('#updatemodal').attr("action", '/events/'+event.id);
+                    $('#modal-event #title').val(event.title);
+                    $('#modal-event #date_start').val(date_start);
+                    $('#modal-event #time_start').val(time_start);
+                    $('#modal-event #date_end').val(date_end);
+                    $('#modal-event #color').val(event.color);
+                    $('#modal-event').modal('show');
+                }
+    		});
+
+    	});
+
+        $('.colorpicker').colorpicker();
+
+        $('#time_start').bootstrapMaterialDatePicker({
+            date: false,
+            shortTime: false,
+            format: 'HH:mm:ss'
+        });
+
+        $('#date_end').bootstrapMaterialDatePicker({
+            date: true,
+            shortTime: false,
+            format: 'YYYY-MM-DD HH:mm:ss'
+        });
+
+        $('#delete').on('click', function(){
+            var x = $(this);
+            var delete_url = x.attr('data-href')+'/'+x.attr('data-id');
+            $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+            $.ajax({
+                url: delete_url,
+                type: 'DELETE',
+                success: function(result){
+                    $('#modal-event').modal('hide');
+                    alert(result.message);
+                },
+                error: function(result){
+                    $('#modal-event').modal('hide');
+                    alert(result.message);
+                }
+            });
+        });
+
+    </script>
 </html>
