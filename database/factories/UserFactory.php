@@ -24,12 +24,15 @@ $factory->define(App\User::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(app\Evento::class, function (Faker\Generator $faker) {
+use Carbon\Carbon;
 
+$factory->define(app\Evento::class, function (Faker\Generator $faker) {
+    $date_start = $faker->dateTimeThisYear();
+    $date_end = new Carbon($date_start->format('r'));
     return [
         'title' => $faker->sentence(4),
-        'start' => $fake ->dateTimeThisMonth(),
-        'end'   => $fake ->dateTimeThisMonth(),
-        'color' => $fake ->hexcolor,
+        'start' =>  $date_start,
+        'end' =>  $date_end->addHours($faker->numberBetween(1, 35)),
+        'color' => $fake ->hexColor,
     ];
 });

@@ -16,4 +16,4 @@ Route::get('/', function () {
 });
 
 
-Route::resource('Eventos','EventosController');
+Route::resource('events', 'EventsController',['only' => ['index', 'store', 'update', 'destroy']]);
