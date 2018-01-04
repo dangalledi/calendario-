@@ -9,7 +9,7 @@ class Evento extends Model
     /**
      * @var string
      */
-    protected $table = 'eventos';
+    protected $table = 'evento';
 
     /**
      * @var [tipe]
