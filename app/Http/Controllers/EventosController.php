@@ -14,7 +14,7 @@ class EventosController extends Controller
      */
     public function index()
     {
-        $data=Evento::all();
+        $data=Evento::get(['id', 'title', 'start', 'end', 'color']);
 
         return Response()->json($data);
     }
@@ -37,7 +37,14 @@ class EventosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $evento = new Event();
+      $evento->title = $request->title;
+      $evento->start = $request->date_start . ' ' . $request->time_start;
+      $evento->end = $request->date_end;
+      $evento->color = $request->color;
+      $evento->save();
+
+     return redirect('/');
     }
 
     /**
@@ -82,6 +89,15 @@ class EventosController extends Controller
      */
     public function destroy($id)
     {
-        //
+      $evento = Event::find($id);
+     if($evento == null)
+         return Response()->json([
+             'message'   =>  'error delete.'
+         ]);
+     $evento->delete();
+     return Response()->json([
+         'message'   =>  'success delete.'
+     ]);
+
     }
 }
