@@ -22,6 +22,14 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Products::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->sentence(2),
+        'short' => $faker->unique()->safeEmailtext(140),
+        'body' => $faker->text(900),
+    ];
+});
+
 use Carbon\Carbon;
 
 $factory->define(App\Event::class, function (Faker\Generator $faker) {
