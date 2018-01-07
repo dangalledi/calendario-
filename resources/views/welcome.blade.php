@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>fullCalendar and Laravel 5.3</title>
+        <title>Calendario</title>
         {!! Html::style('vendor/seguce92/bootstrap/css/bootstrap.min.css') !!}
         {!! Html::style('vendor/seguce92/fullcalendar/fullcalendar.min.css') !!}
         {!! Html::style('vendor/seguce92/bootstrap-datetimepicker/css/bootstrap-material-datetimepicker.css') !!}
@@ -59,7 +59,7 @@
             </div>
             {{ Form::close() }}
             <div id='calendar'></div>
-            
+
             {!!Form::open(['route'=>['events.update', 1],  'method'=>'PUT', 'id'=>'updatemodel'])!!}
             <div id="modal-event" class="modal fade" tabindex="-1" data-backdrop="static">
                 <div class="modal-dialog">
